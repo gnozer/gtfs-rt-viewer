@@ -59,13 +59,6 @@ function runRT() {
             var offsetEnd = 2;
 
             var bufferSliceWhereProtobufBytesIs = xhr.response.slice(protoStart + offsetStart, protoEnd - offsetEnd);
-                //Position GMaps
-                var gmapsLink = document.createElement('a');
-                var GmapsLinkText = document.createTextNode("Position géographique (GMaps)");
-                gmapsLink.setAttribute('href', "https://www.google.com/maps/search/"+entity.vehicle.position.latitude+"+"+entity.vehicle.position.longitude);
-                gmapsLink.setAttribute('target', "_blank");
-                gmapsLink.appendChild(GmapsLinkText);
-                divResult.appendChild(gmapsLink);
 
             var msg = AwesomeMessage.decode(new Uint8Array(xhr.response));
             console.log(msg);
