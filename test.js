@@ -70,7 +70,6 @@ function runRT() {
                 }
 
             })
-
             displayTrips();
 
         }
@@ -80,5 +79,34 @@ function runRT() {
 };
 
 function displayTrips(){
-    console.log(RT);
+    RT.forEach(function(letrip,i){
+        //Titre
+        var title = document.createElement("h2");
+        var textTitle = document.createTextNode(GTFS.datas.routes[letrip.tripUpdate.trip.routeId].route_long_name + " - " + GTFS.datas.trips[letrip.tripUpdate.trip.tripId].trip_headsign);
+        title.appendChild(textTitle);
+        document.getElementById("result").appendChild(title);
+        
+        //Tableau comparatif
+        var table = document.createElement("table");
+        table.classList.add("table");
+        var thead = document.createElement("thead");
+        thead.classList.add("thead-dark");
+        var tr = document.createElement("tr");
+        var th1 = document.createElement("th");
+        var th1Text = document.createTextNode("Arrêts");
+        var th2 = document.createElement("th");
+        var th1Text = document.createTextNode("Temps réel");
+        var th3 = document.createElement("th");
+        var th1Text = document.createTextNode("Horaire théorique");
+        var thProperty = document.createAttribute("scope");
+        thProperty.value = "col";
+        th1.setAttribute(thProperty);
+        th2.setAttribute(thProperty);
+        th3.setAttribute(thProperty);
+        tr.appendChild(th1);
+        tr.appendChild(th2);
+        tr.appendChild(th3);
+        thead.appendChild(tr);
+        table.appendChild(thead);
+    })
 }
