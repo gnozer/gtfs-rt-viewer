@@ -1,5 +1,5 @@
 //function readZip(response){
-function readZip(e, callback, callback2){ //TODO use callback here
+function readZip(e, applyPromise, callback){ //TODO use callback here
 	let droppedFiles = e.dataTransfer.files;
 	//var blob = new Blob([response], {type: "octet/stream"});
 	//if(!blob) return;
@@ -16,10 +16,9 @@ function readZip(e, callback, callback2){ //TODO use callback here
 				entries.forEach(function(entry, i, array){
 					entry.getData(new zip.TextWriter(), function(text) {	
 						// text contains the entry data as a String
-						promises.push(callback(entry.filename, text));
-						
-						if(i == array.length -1){ //set resolve promises behaviour when we're sure all are running
-							Promise.all(promises).then(callback2);
+						promises.push(applyPromise(entry.filename, text));
+						if(i == array.length - 1){
+							Promise.all(promises).then(callback);
 						}
 					});	
 				});

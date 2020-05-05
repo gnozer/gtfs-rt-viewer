@@ -19,6 +19,29 @@ function drop(e) {
     e.stopPropagation();
 }
 
+function checkConsistancy(entity){
+	console.log(entity);
+	return new Promise(function(resolve, reject) {
+		//vehicule 
+		if(entity && entity.vehicle && entity.vehicle.trip && entity.vehicle.trip.tripId){
+			if(GTFS.datas.trips[entity.vehicle.trip.tripId]){ //FIXME test ad hoc
+				resolve(entity);
+			}else{
+				reject("trip id is not constistancy, or ad hoc"); 
+			}
+		}
+		//
+		if(entity && entity.tripUpdate && entity.tripUpdate.trip && entity.tripUpdate.trip.tripId){
+			if(GTFS.datas.trips[entity.tripUpdate.trip.tripId]){
+				resolve(entity);
+			}else{
+				reject("trip id is not constistancy");
+			}
+		}
+		reject(entity);
+	});
+}
+
 //run real time polling
 function runRT() {
     protobuf.load("gtfs-realtime.proto", function (err, root) {
@@ -58,26 +81,38 @@ function runRT() {
             var offsetStart = 2;
             var offsetEnd = 2;
 
-            var bufferSliceWhereProtobufBytesIs = xhr.response.slice(protoStart + offsetStart, protoEnd - offsetEnd);
+       var StatusEnum = [
+           "Arrive bientôt",
+           "A l'arrêt",
+           "Sur la route"
+       ]
+        
+		var msg = AwesomeMessage.decode(new Uint8Array(xhr.response));
+		msg["entity"].forEach(function(entity, i){
 
-            var msg = AwesomeMessage.decode(new Uint8Array(xhr.response));
-            console.log(msg);
-            msg["entity"].forEach(function (entity, i) {
-                if (entity.id.includes("Vehicle")) {
-                    msg["entity"][i + 1].tripUpdate.vehicle = entity.vehicle;
-                } else {
-                    RT.push(entity);
-                }
+			if (entity.id.includes("Vehicle")) {
+				msg["entity"][i + 1].tripUpdate.vehicle = entity.vehicle;
+				displayVehiculeOnTrip(entity);
+			} else {
+				/*checkConsistancy(entity).then(function(entity){
+					RT.push(entity);
+				}).catch(function(error){
+					console.log(error);
+				});*/
+				RT.push(entity);
+				/*Promise.all(promises).then(function(entity){
+					displayTrips();
+				}).catch(function(error){
+					console.log(error);
+				});*/
+			}
 
-            })
-            displayTrips();
-
-        }
-
-        xhr.send(null);
-    });
-};
-
+		});
+			  displayTrips();
+	}
+	xhr.send(null);
+});
+}
 function displayTrips(){
     RT.forEach(function(letrip,i){
         //Titre
@@ -121,7 +156,7 @@ function displayTrips(){
                 var thText = document.createTextNode(GTFS.datas.stops[stopTime.stop_id].stop_name);
                 th.appendChild(thText);
                 tr.appendChild(th);
-
+ 
                 var td1 = document.createElement("td");
                 var td1Text = document.createTextNode(stopTime.arrival_time);
                 td1.appendChild(td1Text);
@@ -133,12 +168,12 @@ function displayTrips(){
                         td2.appendChild(td2Text);
                         tr.appendChild(td2);
                     }
-
+ 
                 }
-
+ 
                 table.appendChild(tr);
             })
             
         }
-    })
+    });
 }
