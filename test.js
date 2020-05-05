@@ -81,6 +81,8 @@ function runRT(){
                 gmapsLink.setAttribute('target', "_blank");
                 gmapsLink.appendChild(GmapsLinkText);
                 divResult.appendChild(gmapsLink);
+					
+					displayVehiculeOnTrip(entity);
                 
                 //Status
                 var statusP = document.createElement("p");
