@@ -118,8 +118,12 @@ var GTFS = {
 			  return line !== ""; // remove empty lines
 		});
 	},
+	getStopsByTripId(tripId){
+		return GTFS.datas.stop_times[tripId].map(function(stop_time){
+			return GTFS.datas.stops[stop_time.stop_id];
+		});
+	},
 	fetchGTFSData: function(filename, textContent){
-		
 		return new Promise(function(resolve, reject) {
 			var 
 			data = GTFS.getGTFSLines(textContent),
@@ -139,7 +143,6 @@ var GTFS = {
 							template[elt] = (template.hasOwnProperty(elt) ? i : false);
 						});
 						GTFS.datas[gtfs_property] = {};
-
 					}else{
 						var entry = {};
 						for(var key in template){
@@ -158,7 +161,6 @@ var GTFS = {
 						}
 					}
 				});
-				
 				resolve();
 			}
 		});
