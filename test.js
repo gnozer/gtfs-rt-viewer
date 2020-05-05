@@ -1,4 +1,26 @@
-protobuf.load("gtfs-realtime.proto", function(err, root) {
+//load static
+
+/*GET('https://zenbus.net/gtfs/static/download.zip?dataset=moselle-et-madon')
+.then(function (datums) {
+  console.log(typeof datums.response);
+	
+	readZip(datums.response, null)
+});*/
+
+function allowDrop(e){
+	e.preventDefault();
+	e.stopPropagation();
+}
+
+function drop(e){
+	readZip(e, GTFS.fetchGTFSData, runRT);
+	e.preventDefault();
+	e.stopPropagation();
+}
+
+//run real time polling
+function runRT(){
+	protobuf.load("gtfs-realtime.proto", function(err, root) {
     if (err)
         throw err;
     
@@ -102,3 +124,4 @@ protobuf.load("gtfs-realtime.proto", function(err, root) {
 
     xhr.send(null);
 });
+};
