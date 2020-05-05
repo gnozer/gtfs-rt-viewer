@@ -161,7 +161,7 @@ var GTFS = {
 				
 				resolve();
 			}
+			
 		});
-		
 	}
 };
