@@ -5,7 +5,7 @@ tripShapeLayer,
 tripStopsLayer;
 
 (function initMap(){
-	map = L.map('map', {editable: true}).setView([51.505, -0.09], 13);
+	map = L.map('map').setView([51.505, -0.09], 13);
 	L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'}).addTo(map); 
 })();
 
@@ -14,7 +14,6 @@ function displayVehiculeOnTrip(vehiclePosition){
 	displayVehicle(vehiclePosition);
 	
 	var trip = GTFS.datas.trips[vehiclePosition.vehicle.trip.tripId];
-	
 	if(trip){
 		var 
 		stops = GTFS.getStopsByTripId(trip.trip_id),
@@ -32,13 +31,11 @@ function displayVehiculeOnTrip(vehiclePosition){
 		shape.forEach(function(shape_entry){
 			shapeFeature.coordinates.push([parseFloat(shape_entry['shape_pt_lon']), parseFloat(shape_entry['shape_pt_lat'])]);
 		});
-		
 		displayShape(shapeFeature);
 		
 	}else{
 		console.log("unknown trip");
 	}
-	
 }
 
 function buildGeoJsonShape(){
@@ -54,7 +51,6 @@ function buildGeoJsonStop(stop){
 		"coordinates": [parseFloat(stop.stop_lon), parseFloat(stop.stop_lat)]
 	}
 }
-
 
 function displayVehicle(vehiclePosition){
 	if(!vehicleMarker){
