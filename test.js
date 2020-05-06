@@ -108,16 +108,16 @@ function runRT() {
 			}
 
 		});
-			  displayTrips();
+			//  displayTrips();
 	}
 	xhr.send(null);
 });
-}
+}/*
 function displayTrips(){
     RT.forEach(function(letrip,i){
         //Titre
         var title = document.createElement("h2");
-        var textTitle = document.createTextNode(GTFS.datas.routes[letrip.tripUpdate.trip.routeId].route_long_name/* + " - " + GTFS.datas.trips[letrip.tripUpdate.trip.tripId].trip_headsign*/);
+        var textTitle = document.createTextNode(GTFS.datas.routes[letrip.tripUpdate.trip.routeId].route_long_name// + " - " + GTFS.datas.trips[letrip.tripUpdate.trip.tripId].trip_headsign);
         title.appendChild(textTitle);
         document.getElementById("tripsList").appendChild(title);
         
@@ -176,4 +176,4 @@ function displayTrips(){
             
         }
     });
-}
+}*/
