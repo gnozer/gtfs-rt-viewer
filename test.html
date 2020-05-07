@@ -4,7 +4,6 @@
 <head>
     <meta charset="utf-8">
     <title>Test Protobuf</title>
-    <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.jsdelivr.net/gh/dcodeIO/protobuf.js@6.9.0/dist/protobuf.js"></script>
     <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.3.4/dist/leaflet.css" />
@@ -23,11 +22,22 @@
 
 </head>
 
-<body ondrop="drop(event)" ondragover="allowDrop(event)">
+<body>
     <div id="app">
         <nav class="navbar navbar-dark bg-dark">
             <a class="navbar-brand" href="#">Trips Viewer</a>
-            <div class="input-group mb-3">
+            <div class="card text-center w-75" v-if="!this.GTFS.datas.routes"  v-on:drop="drop" v-on:dragover="allowDrop" style="border:2px dashed #c4c4c4">
+                <div class="card-body">
+                    Drag n Drop GTFS zip file here
+                </div>
+            </div>
+            <div class="input-group mb-3" v-if="GTFSSuccess">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3">URL GTFS-RT</span>
+                </div>
+                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" v-model="urlRT" v-on:keyup.enter="runRT(urlRT)" :disabled="rtSuccess">
+            </div>
+            <div class="input-group mb-3" v-if="rtSuccess">
                 <div class="input-group-prepend">
                     <label class="input-group-text" for="selectRTFeed">Trip</label>
                 </div>
@@ -45,6 +55,7 @@
                                 <th scope="col">Arrêts</th>
                                 <th scope="col">Horaire Théorique</th>
                                 <th scope="col">ETA (RT)</th>
+                                <th scope="col">ETD (RT)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -52,6 +63,7 @@
                                 <th scope="row">{{ this.GTFS.datas.stops[stopTime.stop_id].stop_name }}</th>
                                 <td>{{ stopTime.arrival_time }}</td>
                                 <td>{{ getETA(stopTime.stop_sequence) }}</td>
+                                <td>{{ getETD(stopTime.stop_sequence) }}</td>
                             </tr>
                         </tbody>
                     </table>

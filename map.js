@@ -9,14 +9,14 @@ tripStopsLayer;
 	L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'}).addTo(map); 
 })();
 
-function displayVehiculeOnTrip(vehiclePosition){
+function displayVehiculeOnTrip(){
 	
-	displayVehicle(vehiclePosition);
+	displayVehicle(this.selectedTrip.tripUpdate);
 	
-	var trip = GTFS.datas.trips[vehiclePosition.vehicle.trip.tripId];
+	var trip = this.GTFS.datas.trips[this.selectedTrip.tripUpdate.vehicle.trip.tripId];
 	if(trip){
 		var 
-		stops = GTFS.getStopsByTripId(trip.trip_id),
+		stops = this.GTFS.getStopsByTripId(trip.trip_id),
 		stopFeature = [];
 		
 		stops.forEach(function(stop){
@@ -25,9 +25,9 @@ function displayVehiculeOnTrip(vehiclePosition){
 		
 		displayStops(stopFeature);
 		
-		var shape = GTFS.datas.shapes[trip.shape_id];
+		var shape = this.GTFS.datas.shapes[trip.shape_id];
 		
-		var shapeFeature = this.buildGeoJsonShape();
+		var shapeFeature = buildGeoJsonShape();
 		shape.forEach(function(shape_entry){
 			shapeFeature.coordinates.push([parseFloat(shape_entry['shape_pt_lon']), parseFloat(shape_entry['shape_pt_lat'])]);
 		});
@@ -53,7 +53,8 @@ function buildGeoJsonStop(stop){
 }
 
 function displayVehicle(vehiclePosition){
-	if(!vehicleMarker){
+	console.log(vehiclePosition);
+    if(!vehicleMarker){
 		var vehicleIcon = L.icon({
 			iconUrl: 'vehicle.png',
 			iconSize: [64, 64],
