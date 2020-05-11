@@ -4,12 +4,9 @@ vehicleMarker,
 tripShapeLayer,
 tripStopsLayer;
 
-(function initMap(){
-	map = L.map('map').setView([51.505, -0.09], 13);
-	L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'}).addTo(map); 
-})();
-
 function displayVehiculeOnTrip(){
+	
+	console.log("yo");
 	
 	displayVehicle(this.selectedTrip.tripUpdate);
 	
@@ -18,7 +15,7 @@ function displayVehiculeOnTrip(){
 		var 
 		stops = this.GTFS.getStopsByTripId(trip.trip_id),
 		stopFeature = [];
-		
+		//TODO move in build function
 		stops.forEach(function(stop){
 			stopFeature.push(buildGeoJsonStop(stop));
 		});
