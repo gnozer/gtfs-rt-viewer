@@ -18,8 +18,19 @@
     <!-- Load required Bootstrap and BootstrapVue CSS -->
     <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
     <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
-
-
+	<style>
+		
+		body{
+			overflow: hidden;
+		}
+		#map{
+		 height: 100%;
+		 width: 50%;
+		 position: absolute;
+			top: 164px;
+		 right: 0;
+		}
+	</style>
 </head>
 
 <body>
@@ -42,13 +53,13 @@
                     <label class="input-group-text" for="selectRTFeed">Trip</label>
                 </div>
                 <select class="custom-select" id="selectRTFeed" v-model="selectedTrip">
-                    <option v-for="(tripUpdate, index) in tripUpdates" v-bind:value="tripUpdate">{{ this.GTFS.datas.routes[tripUpdate.tripUpdate.trip.routeId].route_long_name }}</option>
+                    <option v-for="(tripUpdate, index) in tripUpdates" v-bind:value="tripUpdate">{{ this.GTFS.datas.routes[tripUpdate.tripUpdate.trip.routeId].route_long_name }} - {{tripUpdate.tripUpdate.trip.tripId}}</option>
                 </select>
             </div>
         </nav>
-        <div class="container-fluid">
-            <div class="row" v-if="selectedTrip">
-                <div class="col-6" id="tripsList">
+        <div class="w-50">
+            <div  v-if="selectedTrip">
+                <div id="tripsList">
                     <table class="table table-sm table-hover">
                         <thead class="thead-dark">
                             <tr>
@@ -68,24 +79,28 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="col-6" id="map">
-                </div>
+                <!--<div class="col-6" id="map">
+                </div>-->
             </div>
         </div>
+		 <div id="map" class="w-50">
+       </div>
     </div>
 </body>
 
-<script src="map.js"></script>
-<script src="test.js"></script>
 <!-- Load polyfills to support older browsers -->
+
 <script src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver" crossorigin="anonymous"></script>
 
+
 <!-- Load Vue followed by BootstrapVue -->
-<script src="//unpkg.com/vue@latest/dist/vue.min.js"></script>
+<script src="//unpkg.com/vue@latest/dist/vue.js"></script>
 <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
 
 <!-- Load the following for BootstrapVueIcons support -->
-<script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
-<script src="vue.js"></script>
 
+<script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
+<script src="map.js"></script>
+<script src="vue.js"></script>
+<script src="test.js"></script>
 </html>

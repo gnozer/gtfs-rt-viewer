@@ -11,6 +11,16 @@ var app = new Vue({
         rtSuccess: false,
         GTFSSuccess: false
     },
+	mounted: function() {
+		
+    // Code that will run only after the
+    // entire view has been rendered
+			//	(function initMap(){
+		map = L.map('map').setView([51.505, -0.09], 13);
+		L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'}).addTo(map); 
+		//})();
+		
+	},
     methods: {
         getETA: function (stopSequence) {
             for (var i = 0; i < this.selectedTrip.tripUpdate.stopTimeUpdate.length; i++) {
