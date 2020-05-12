@@ -18,26 +18,27 @@
     <!-- Load required Bootstrap and BootstrapVue CSS -->
     <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
     <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
-	<style>
-		
-		body{
-			overflow: hidden;
-		}
-		#map{
-		 height: 100%;
-		 width: 50%;
-		 position: absolute;
-			top: 164px;
-		 right: 0;
-		}
-	</style>
+    <style>
+        #map {
+            height: 100%;
+            width: 50%;
+            position: absolute;
+            top: 164px;
+            right: 0;
+        }
+
+    </style>
 </head>
 
 <body>
     <div id="app">
         <nav class="navbar navbar-dark bg-dark">
             <a class="navbar-brand" href="#">Trips Viewer</a>
-            <div class="card text-center w-75" v-if="!this.GTFS.datas.routes"  v-on:drop="drop" v-on:dragover="allowDrop" style="border:2px dashed #c4c4c4">
+            <button type="button" class="btn btn-primary" v-if="rtSuccess" v-on:click='refresh = !refresh'>
+                Activer rafraichissement (5sec)
+            </button>
+            <span class="badge badge-info">{{ timer }}</span>
+            <div class="card text-center w-75" v-if="!this.GTFS.datas.routes" v-on:drop="drop" v-on:dragover="allowDrop" style="border:2px dashed #c4c4c4">
                 <div class="card-body">
                     Drag n Drop GTFS zip file here
                 </div>
@@ -53,12 +54,12 @@
                     <label class="input-group-text" for="selectRTFeed">Trip</label>
                 </div>
                 <select class="custom-select" id="selectRTFeed" v-model="selectedTrip">
-                    <option v-for="(tripUpdate, index) in tripUpdates" v-bind:value="tripUpdate">{{ this.GTFS.datas.routes[tripUpdate.tripUpdate.trip.routeId].route_long_name }} - {{tripUpdate.tripUpdate.trip.tripId}}</option>
+                    <option v-for="(tripUpdate, index) in tripUpdates" v-bind:value="index">{{ this.GTFS.datas.routes[tripUpdate.tripUpdate.trip.routeId].route_long_name }} - {{tripUpdate.tripUpdate.trip.tripId}}</option>
                 </select>
             </div>
         </nav>
         <div class="w-50">
-            <div  v-if="selectedTrip">
+            <div v-if="selectedTrip != -1">
                 <div id="tripsList">
                     <table class="table table-sm table-hover">
                         <thead class="thead-dark">
@@ -70,7 +71,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="stopTime in this.GTFS.datas.stop_times[selectedTrip.tripUpdate.trip.tripId]">
+                            <tr v-for="stopTime in this.GTFS.datas.stop_times[this.tripUpdates[this.selectedTrip].tripUpdate.trip.tripId]">
                                 <th scope="row">{{ this.GTFS.datas.stops[stopTime.stop_id].stop_name }}</th>
                                 <td>{{ stopTime.arrival_time }}</td>
                                 <td>{{ getETA(stopTime.stop_sequence) }}</td>
@@ -83,8 +84,8 @@
                 </div>-->
             </div>
         </div>
-		 <div id="map" class="w-50">
-       </div>
+        <div id="map" class="w-50">
+        </div>
     </div>
 </body>
 
@@ -103,4 +104,5 @@
 <script src="map.js"></script>
 <script src="vue.js"></script>
 <script src="test.js"></script>
+
 </html>

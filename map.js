@@ -8,9 +8,9 @@ function displayVehiculeOnTrip(){
 	
 	console.log("yo");
 	
-	displayVehicle(this.selectedTrip.tripUpdate);
+	displayVehicle(this.tripUpdates[this.selectedTrip].tripUpdate);
 	
-	var trip = this.GTFS.datas.trips[this.selectedTrip.tripUpdate.vehicle.trip.tripId];
+	var trip = this.GTFS.datas.trips[this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.trip.tripId];
 	if(trip){
 		var 
 		stops = this.GTFS.getStopsByTripId(trip.trip_id),
