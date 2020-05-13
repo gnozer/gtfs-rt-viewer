@@ -181,7 +181,6 @@ var app = new Vue({
             this.timer = time;
         },
         stopInterval: function(){
-            console.log("desactiver");
             this.refresh = false;
             clearInterval(intervalId);
         }
