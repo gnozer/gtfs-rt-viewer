@@ -46,12 +46,15 @@ var app = new Vue({
             }
             return "N/A";
         },
-        getStop: function (tripId, stopSeq){
-            for(var i = 0; i < this.GTFS.datas.stop_times[tripId].length ; i++) {
-                if(i == stopSeq){
-                    return this.GTFS.datas.stops[this.GTFS.datas.stop_times[tripId][stopSeq].stop_id].stop_name;
+        getStop: function (tripId, stopSeq) {
+            if (this.GTFS.datas.trips[tripId]) {
+                for (var i = 0; i < this.GTFS.datas.stop_times[tripId].length; i++) {
+                    if (i == stopSeq) {
+                        return this.GTFS.datas.stops[this.GTFS.datas.stop_times[tripId][stopSeq].stop_id].stop_name;
+                    }
                 }
-            }  
+            }
+
         },
         runRT: function (urlRT) {
             protobuf.load("gtfs-realtime.proto", function (err, root) {
@@ -186,7 +189,7 @@ var app = new Vue({
             var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
             this.timer = time;
         },
-        stopInterval: function(){
+        stopInterval: function () {
             this.refresh = false;
             clearInterval(intervalId);
         }

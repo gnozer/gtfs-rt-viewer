@@ -62,8 +62,8 @@
             </div>
         </nav>
         <div class="w-50">
-            <div v-if="selectedTrip != -1 && rtSuccess">
-                <ul class="list-group list-group-flush" v-if="selectedTrip != -1 && rtSuccess">
+            <div v-if="selectedTrip != -1 && rtSuccess && this.GTFS.datas.trips[this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.trip.tripId]">
+                <ul class="list-group list-group-flush">
                     <li class="list-group-item"><span class="font-italic">{{ new Date(this.tripUpdates[this.selectedTrip].tripUpdate.timestamp * 1000).toLocaleTimeString() }}</span> - {{ this.vehicleStatus[this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.currentStatus] }} <span class="font-weight-bold">{{ getStop(this.tripUpdates[this.selectedTrip].tripUpdate.trip.tripId, this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.currentStopSequence) }}</span></li>
                 </ul>
                 <div id="tripsList">
@@ -88,6 +88,9 @@
                 </div>
                 <!--<div class="col-6" id="map">
                 </div>-->
+            </div>
+            <div class="alert alert-danger text-center m-2" v-else>
+                Trip inconnu
             </div>
         </div>
         <div id="map" class="w-50">
