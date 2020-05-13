@@ -63,6 +63,9 @@
         </nav>
         <div class="w-50">
             <div v-if="selectedTrip != -1 && rtSuccess">
+                <ul class="list-group list-group-flush" v-if="selectedTrip != -1 && rtSuccess">
+                    <li class="list-group-item"><span class="font-italic">{{ new Date(this.tripUpdates[this.selectedTrip].tripUpdate.timestamp * 1000).toLocaleTimeString() }}</span> - {{ this.vehicleStatus[this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.currentStatus] }} <span class="font-weight-bold">{{ getStop(this.tripUpdates[this.selectedTrip].tripUpdate.trip.tripId, this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.currentStopSequence) }}</span></li>
+                </ul>
                 <div id="tripsList">
                     <table class="table table-sm table-hover">
                         <thead class="thead-dark">
