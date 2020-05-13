@@ -34,8 +34,11 @@
     <div id="app">
         <nav class="navbar navbar-dark bg-dark">
             <a class="navbar-brand" href="#">Trips Viewer</a>
-            <button type="button" class="btn btn-primary" v-if="rtSuccess" v-on:click='refresh = !refresh'>
+            <button type="button" class="btn btn-primary" v-if="rtSuccess && !refresh" v-on:click='refresh = !refresh'>
                 Activer rafraichissement (5sec)
+            </button>
+            <button type="button" class="btn btn-danger" v-if="rtSuccess && refresh" v-on:click='stopInterval'>
+                Désactiver rafraichissement
             </button>
             <span class="badge badge-info">{{ timer }}</span>
             <div class="card text-center w-75" v-if="!this.GTFS.datas.routes" v-on:drop="drop" v-on:dragover="allowDrop" style="border:2px dashed #c4c4c4">
@@ -59,7 +62,7 @@
             </div>
         </nav>
         <div class="w-50">
-            <div v-if="selectedTrip != -1">
+            <div v-if="selectedTrip != -1 && rtSuccess">
                 <div id="tripsList">
                     <table class="table table-sm table-hover">
                         <thead class="thead-dark">

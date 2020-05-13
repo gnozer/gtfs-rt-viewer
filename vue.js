@@ -1,5 +1,5 @@
 Vue.config.devtools = true
-
+var intervalId;
 var RT = [];
 var app = new Vue({
     el: '#app',
@@ -31,7 +31,7 @@ var app = new Vue({
     methods: {
         getETA: function (stopSequence) {
             for (var i = 0; i < this.tripUpdates[this.selectedTrip].tripUpdate.stopTimeUpdate.length; i++) {
-                if (stopSequence == this.tripUpdates[this.selectedTrip].tripUpdate.stopTimeUpdate[i].stopSequence && stopSequence != 0) {
+                if (stopSequence == this.tripUpdates[this.selectedTrip].tripUpdate.stopTimeUpdate[i].stopSequence && stopSequence != 0 && this.tripUpdates[this.selectedTrip].tripUpdate.stopTimeUpdate[i].hasOwnProperty("arrival")) {
                     return new Date(this.tripUpdates[this.selectedTrip].tripUpdate.stopTimeUpdate[i].arrival.time * 1000).toLocaleTimeString();
                 }
             }
@@ -39,7 +39,7 @@ var app = new Vue({
         },
         getETD: function (stopSequence) {
             for (var i = 0; i < this.tripUpdates[this.selectedTrip].tripUpdate.stopTimeUpdate.length; i++) {
-                if (stopSequence == this.tripUpdates[this.selectedTrip].tripUpdate.stopTimeUpdate[i].stopSequence && stopSequence != 0) {
+                if (stopSequence == this.tripUpdates[this.selectedTrip].tripUpdate.stopTimeUpdate[i].stopSequence && stopSequence != 0 && this.tripUpdates[this.selectedTrip].tripUpdate.stopTimeUpdate[i].hasOwnProperty("departure")) {
                     return new Date(this.tripUpdates[this.selectedTrip].tripUpdate.stopTimeUpdate[i].departure.time * 1000).toLocaleTimeString();
                 }
             }
@@ -108,10 +108,58 @@ var app = new Vue({
                 }
                 xhr.send(null);
             });
-            if(RT.length > 0){
-                this.tripUpdates = RT;
-                this.rtSuccess = true;
-            }
+            //if(RT.length > 0){
+            this.tripUpdates = RT;
+            this.rtSuccess = true;
+            //}
+        },
+        updateRT: function () {
+            protobuf.load("gtfs-realtime.proto", function (err, root) {
+                if (err)
+                    throw err;
+
+                var AwesomeMessage = root.lookupType("transit_realtime.FeedMessage");
+                var xhr = new XMLHttpRequest();
+                xhr.open(
+                    /* method */
+                    "GET",
+                    /* file */
+                    window.app.urlRT,
+                    /* async */
+                    true
+                );
+                xhr.responseType = "arraybuffer";
+                xhr.onload = function (evt) {
+                    // reading whole body
+                    var bodyEncodedInString = String.fromCharCode.apply(String, new Uint8Array(xhr.response));
+
+                    var protoStart = bodyEncodedInString.indexOf('--protobuf');
+                    var protoEnd = bodyEncodedInString.indexOf('--protobuf--');
+
+                    var offsetStart = 2;
+                    var offsetEnd = 2;
+
+                    var msg = AwesomeMessage.decode(new Uint8Array(xhr.response));
+                    //RT = [];
+                    msg["entity"].forEach(function (entity, i) {
+                        if (entity.id.includes("Vehicle")) {
+                            msg["entity"][i + 1].tripUpdate.vehicle = entity.vehicle;
+                        } else {
+                            //RT.push(entity);
+                            //console.log("entity " + i);
+                            for (var j = 0; j < window.app.tripUpdates.length; j++) {
+                                //console.log(window.app.tripUpdates[j]);
+                                if (entity.id == window.app.tripUpdates[j].id) {
+                                    window.app.tripUpdates[j] = entity;
+                                    window.app.displayVehiculeOnTrip();
+                                }
+                            }
+                        }
+                    });
+                }
+                xhr.send(null);
+            });
+
         },
         allowDrop: function (e) {
             e.preventDefault();
@@ -131,6 +179,11 @@ var app = new Vue({
             var today = new Date();
             var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
             this.timer = time;
+        },
+        stopInterval: function(){
+            console.log("desactiver");
+            this.refresh = false;
+            clearInterval(intervalId);
         }
     },
     watch: {
@@ -138,10 +191,10 @@ var app = new Vue({
         selectedTrip: function (newSelectedTrip, oldSelectedTrip) {
             this.displayVehiculeOnTrip();
         },
-        refresh: function(newRefresh, oldRefresh){
-            this.rtSuccess = false;
-            RT = []
-            setInterval(this.runRT(this.urlRT), 5000);
+        refresh: function (newRefresh, oldRefresh) {
+            if (newRefresh) {
+                intervalId = setInterval(this.updateRT, 5000);
+            }
         }
     }
 });
