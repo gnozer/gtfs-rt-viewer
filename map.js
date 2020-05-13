@@ -6,8 +6,6 @@ tripStopsLayer;
 
 function displayVehiculeOnTrip(){
 	
-	console.log("yo");
-	
 	displayVehicle(this.tripUpdates[this.selectedTrip].tripUpdate);
 	
 	var trip = this.GTFS.datas.trips[this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.trip.tripId];
@@ -50,7 +48,6 @@ function buildGeoJsonStop(stop){
 }
 
 function displayVehicle(vehiclePosition){
-	console.log(vehiclePosition);
     if(!vehicleMarker){
 		var vehicleIcon = L.icon({
 			iconUrl: 'vehicle.png',
