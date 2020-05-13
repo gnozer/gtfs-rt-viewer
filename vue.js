@@ -11,7 +11,8 @@ var app = new Vue({
         rtSuccess: false,
         GTFSSuccess: false,
         timer: "",
-        refresh: false
+        refresh: false,
+        vehicleStatus: ["Le véhicule est sur le point d'arriver à l'arrêt ", "Le véhicule est immobilisé à l'arrêt ", "Le véhicule a quitté l'arrêt précédent et poursuit sa route vers "]
     },
     mounted: function () {
 
@@ -44,6 +45,13 @@ var app = new Vue({
                 }
             }
             return "N/A";
+        },
+        getStop: function (tripId, stopSeq){
+            for(var i = 0; i < this.GTFS.datas.stop_times[tripId].length ; i++) {
+                if(i == stopSeq){
+                    return this.GTFS.datas.stops[this.GTFS.datas.stop_times[tripId][stopSeq].stop_id].stop_name;
+                }
+            }  
         },
         runRT: function (urlRT) {
             protobuf.load("gtfs-realtime.proto", function (err, root) {
@@ -108,10 +116,8 @@ var app = new Vue({
                 }
                 xhr.send(null);
             });
-            //if(RT.length > 0){
             this.tripUpdates = RT;
             this.rtSuccess = true;
-            //}
         },
         updateRT: function () {
             protobuf.load("gtfs-realtime.proto", function (err, root) {
