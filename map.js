@@ -49,10 +49,15 @@ function buildGeoJsonStop(stop){
 
 function displayVehicle(vehiclePosition){
     if(!vehicleMarker){
-		var vehicleIcon = L.icon({
-			iconUrl: 'vehicle.png',
-			iconSize: [64, 64],
-			iconAnchor: [32, 0],
+//		var vehicleIcon = L.icon({
+//			iconUrl: 'vehicle.png',
+//			iconSize: [64, 64],
+//			iconAnchor: [32, 0],
+//		});
+        var vehicleIcon = L.icon({
+			iconUrl: 'vehicle2.png',
+			iconSize: [60, 60],
+			iconAnchor: [30, 30],
 		});
 		vehicleMarker = L.marker([vehiclePosition.vehicle.position.latitude, vehiclePosition.vehicle.position.longitude], {icon: vehicleIcon}).addTo(map);
 	}else{
