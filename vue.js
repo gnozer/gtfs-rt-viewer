@@ -1,14 +1,14 @@
 Vue.config.devtools = true
 var intervalId;
-var RT = [];
 var app = new Vue({
     el: '#app',
     data: {
+		  activeVehicle: null,
         tripUpdates: [],
+		  vehicles: [],
         GTFS: GTFS,
-        selectedTrip: "-1",
         urlRT: null,
-        rtSuccess: false,
+		  selectedTrip: null,
         GTFSSuccess: false,
         timer: "",
         refresh: false,
@@ -56,7 +56,8 @@ var app = new Vue({
             }
 
         },
-        runRT: function (urlRT) {
+		 
+        getRT: function (isRefresh) {
             protobuf.load("gtfs-realtime.proto", function (err, root) {
                 if (err)
                     throw err;
@@ -67,7 +68,7 @@ var app = new Vue({
                     /* method */
                     "GET",
                     /* file */
-                    urlRT,
+                    this.urlRT,
                     /* async */
                     true
                 );
@@ -95,81 +96,30 @@ var app = new Vue({
                     var offsetEnd = 2;
 
                     var msg = AwesomeMessage.decode(new Uint8Array(xhr.response));
-                    //RT = [];
-                    msg["entity"].forEach(function (entity, i) {
-                        if (entity.id.includes("Vehicle")) {
-                            msg["entity"][i + 1].tripUpdate.vehicle = entity.vehicle;
-                            //displayVehiculeOnTrip(entity);
-                        } else {
-                            /*checkConsistancy(entity).then(function(entity){
-                            	RT.push(entity);
-                            }).catch(function(error){
-                            	console.log(error);
-                            });*/
-                            RT.push(entity);
-                            /*Promise.all(promises).then(function(entity){
-                            	displayTrips();
-                            }).catch(function(error){
-                            	console.log(error);
-                            });*/
-                        }
-
-                    });
-                    //  displayTrips();
-                }
+						 
+						 
+						 msg['entity'].forEach(function(current){
+							 
+							 if(current.vehicle){
+								 
+								 if(this.activeVehicle && this.activeVehicle.id && this.activeVehicle.id === current.id){ //FIXME could we use a watch ? 
+									 this.activeVehicle = current;
+									 this.displayVehiculeOnTrip(isRefresh);
+								 }
+								 
+								 updateArray(this.vehicles, current);
+							 }
+							 
+							 if(current.tripUpdate){
+								  updateArray(this.tripUpdates, current);
+							 }
+							 
+						 }.bind(this));
+                   
+                }.bind(this);
                 xhr.send(null);
-            });
-            this.tripUpdates = RT;
-            this.rtSuccess = true;
-        },
-        updateRT: function () {
-            protobuf.load("gtfs-realtime.proto", function (err, root) {
-                if (err)
-                    throw err;
-
-                var AwesomeMessage = root.lookupType("transit_realtime.FeedMessage");
-                var xhr = new XMLHttpRequest();
-                xhr.open(
-                    /* method */
-                    "GET",
-                    /* file */
-                    window.app.urlRT,
-                    /* async */
-                    true
-                );
-                xhr.responseType = "arraybuffer";
-                xhr.onload = function (evt) {
-                    // reading whole body
-                    var bodyEncodedInString = String.fromCharCode.apply(String, new Uint8Array(xhr.response));
-
-                    var protoStart = bodyEncodedInString.indexOf('--protobuf');
-                    var protoEnd = bodyEncodedInString.indexOf('--protobuf--');
-
-                    var offsetStart = 2;
-                    var offsetEnd = 2;
-
-                    var msg = AwesomeMessage.decode(new Uint8Array(xhr.response));
-                    //RT = [];
-                    msg["entity"].forEach(function (entity, i) {
-                        if (entity.id.includes("Vehicle")) {
-                            msg["entity"][i + 1].tripUpdate.vehicle = entity.vehicle;
-                        } else {
-                            //RT.push(entity);
-                            //console.log("entity " + i);
-                            for (var j = 0; j < window.app.tripUpdates.length; j++) {
-                                //console.log(window.app.tripUpdates[j]);
-                                if (entity.id == window.app.tripUpdates[j].id) {
-                                    window.app.tripUpdates[j] = entity;
-                                    window.app.displayVehiculeOnTrip();
-                                }
-                            }
-                        }
-                    });
-                }
-                xhr.send(null);
-            });
-
-        },
+            }.bind(this));
+        },	
         allowDrop: function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -197,11 +147,18 @@ var app = new Vue({
     watch: {
         // à chaque fois que le selectedTrip change, cette fonction s'exécutera
         selectedTrip: function (newSelectedTrip, oldSelectedTrip) {
+			  var trip = this.tripUpdates[newSelectedTrip]; //TODO use directly the object
+				this.vehicles.forEach(function(elt){
+					if(elt.vehicle.trip.tripId === trip.tripUpdate.trip.tripId){
+						this.activeVehicle = elt;
+					}
+				}.bind(this));
+			  
             this.displayVehiculeOnTrip();
         },
         refresh: function (newRefresh, oldRefresh) {
             if (newRefresh) {
-                intervalId = setInterval(this.updateRT, 5000);
+                intervalId = setInterval(function(){this.getRT(true)}.bind(this), 5000);
             }
         }
     }

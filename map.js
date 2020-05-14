@@ -4,33 +4,31 @@ vehicleMarker,
 tripShapeLayer,
 tripStopsLayer;
 
-function displayVehiculeOnTrip(){
+function displayVehiculeOnTrip(isRefresh){
 	
-	displayVehicle(this.tripUpdates[this.selectedTrip].tripUpdate);
-	
-	var trip = this.GTFS.datas.trips[this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.trip.tripId];
-	if(trip){
+	displayVehicle(this.activeVehicle);
+
+	if(!isRefresh){
 		var 
+		trip = this.GTFS.datas.trips[this.tripUpdates[this.selectedTrip].tripUpdate.trip.tripId],
 		stops = this.GTFS.getStopsByTripId(trip.trip_id),
 		stopFeature = [];
 		//TODO move in build function
 		stops.forEach(function(stop){
 			stopFeature.push(buildGeoJsonStop(stop));
 		});
-		
+
 		displayStops(stopFeature);
-		
+
 		var shape = this.GTFS.datas.shapes[trip.shape_id];
-		
+
 		var shapeFeature = buildGeoJsonShape();
 		shape.forEach(function(shape_entry){
 			shapeFeature.coordinates.push([parseFloat(shape_entry['shape_pt_lon']), parseFloat(shape_entry['shape_pt_lat'])]);
 		});
 		displayShape(shapeFeature);
-		
-	}else{
-		console.log("unknown trip");
 	}
+		
 }
 
 function buildGeoJsonShape(){
@@ -47,7 +45,7 @@ function buildGeoJsonStop(stop){
 	}
 }
 
-function displayVehicle(vehiclePosition){
+function displayVehicle(elt){
     if(!vehicleMarker){
 //		var vehicleIcon = L.icon({
 //			iconUrl: 'vehicle.png',
@@ -59,11 +57,11 @@ function displayVehicle(vehiclePosition){
 			iconSize: [60, 60],
 			iconAnchor: [30, 30],
 		});
-		vehicleMarker = L.marker([vehiclePosition.vehicle.position.latitude, vehiclePosition.vehicle.position.longitude], {icon: vehicleIcon}).addTo(map);
+		vehicleMarker = L.marker([elt.vehicle.position.latitude, elt.vehicle.position.longitude], {icon: vehicleIcon}).addTo(map);
 	}else{
-		vehicleMarker.setLatLng([vehiclePosition.vehicle.position.latitude, vehiclePosition.vehicle.position.longitude]);
+		vehicleMarker.setLatLng([elt.vehicle.position.latitude, elt.vehicle.position.longitude]);
 	}
-	map.setView(vehicleMarker.getLatLng(),5);
+	map.panTo(vehicleMarker.getLatLng());
 }
 
 function displayStops(geoJson){

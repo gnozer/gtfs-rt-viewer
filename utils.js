@@ -25,3 +25,14 @@ xhr.responseType = "arraybuffer";
   });
 }
 
+
+function updateArray(array, element){
+	var previous = array.find(function(previous){
+		return element.id === previous.id;
+	});
+	if(previous){
+		previous = element;
+	}else{
+		array.push(element);
+	}
+}
