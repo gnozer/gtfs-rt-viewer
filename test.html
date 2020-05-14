@@ -63,9 +63,7 @@
         </nav>
         <div class="w-50">
             <div v-if="selectedTrip != -1 && rtSuccess && this.GTFS.datas.trips[this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.trip.tripId]">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><span class="font-italic">{{ new Date(this.tripUpdates[this.selectedTrip].tripUpdate.timestamp * 1000).toLocaleTimeString() }}</span> - {{ this.vehicleStatus[this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.currentStatus] }} <span class="font-weight-bold">{{ getStop(this.tripUpdates[this.selectedTrip].tripUpdate.trip.tripId, this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.currentStopSequence) }}</span></li>
-                </ul>
+                <div class="alert alert-primary m-2" role="alert"><span class="font-italic">{{ new Date(this.tripUpdates[this.selectedTrip].tripUpdate.timestamp * 1000).toLocaleTimeString() }}</span> - {{ this.vehicleStatus[this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.currentStatus] }} <span class="font-weight-bold">{{ getStop(this.tripUpdates[this.selectedTrip].tripUpdate.trip.tripId, this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.currentStopSequence) }}</span></div>
                 <div id="tripsList">
                     <table class="table table-sm table-hover">
                         <thead class="thead-dark">
@@ -77,7 +75,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="stopTime in this.GTFS.datas.stop_times[this.tripUpdates[this.selectedTrip].tripUpdate.trip.tripId]">
+                            <tr v-for="(stopTime, index) in this.GTFS.datas.stop_times[this.tripUpdates[this.selectedTrip].tripUpdate.trip.tripId]" v-bind:class="{'table-primary': index === tripUpdates[selectedTrip].tripUpdate.stopTimeUpdate[0].stopSequence }">
                                 <th scope="row">{{ this.GTFS.datas.stops[stopTime.stop_id].stop_name }}</th>
                                 <td>{{ stopTime.arrival_time }}</td>
                                 <td>{{ getETA(stopTime.stop_sequence) }}</td>
