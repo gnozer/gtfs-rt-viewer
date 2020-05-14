@@ -34,10 +34,10 @@
     <div id="app">
         <nav class="navbar navbar-dark bg-dark">
             <a class="navbar-brand" href="#">Trips Viewer</a>
-            <button type="button" class="btn btn-primary" v-if="rtSuccess && !refresh" v-on:click='refresh = !refresh'>
+            <button type="button" class="btn btn-primary" v-if="!refresh" v-on:click='refresh = !refresh'>
                 Activer rafraichissement (5sec)
             </button>
-            <button type="button" class="btn btn-danger" v-if="rtSuccess && refresh" v-on:click='stopInterval'>
+            <button type="button" class="btn btn-danger" v-if="refresh" v-on:click='stopInterval'>
                 Désactiver rafraichissement
             </button>
             <span class="badge badge-info">{{ timer }}</span>
@@ -50,9 +50,9 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon3">URL GTFS-RT</span>
                 </div>
-                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" v-model="urlRT" v-on:keyup.enter="runRT(urlRT)" :disabled="rtSuccess">
+                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" v-model="urlRT" v-on:keyup.enter="getRT()">
             </div>
-            <div class="input-group mb-3" v-if="rtSuccess">
+            <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <label class="input-group-text" for="selectRTFeed">Trip</label>
                 </div>
@@ -62,7 +62,7 @@
             </div>
         </nav>
         <div class="w-50">
-            <div v-if="selectedTrip != -1 && rtSuccess && this.GTFS.datas.trips[this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.trip.tripId]">
+            <div v-if="selectedTrip">
                 <div class="alert alert-primary m-2" role="alert"><span class="font-italic">{{ new Date(this.tripUpdates[this.selectedTrip].tripUpdate.timestamp * 1000).toLocaleTimeString() }}</span> - {{ this.vehicleStatus[this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.currentStatus] }} <span class="font-weight-bold">{{ getStop(this.tripUpdates[this.selectedTrip].tripUpdate.trip.tripId, this.tripUpdates[this.selectedTrip].tripUpdate.vehicle.currentStopSequence) }}</span></div>
                 <div id="tripsList">
                     <table class="table table-sm table-hover">
